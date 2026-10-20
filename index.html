@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#090a0d">
-<title>daelimanjog</title>
+<title>daelimanjog — 가상의 한 모금</title>
 <style>
 :root{--bg:#090a0d;--panel:#111318;--panel2:#171a21;--line:rgba(255,255,255,.11);--muted:#969ba8;--white:#f4f5f7;--lime:#d9ff68;--orange:#ff9c63;--blue:#9bd9ff}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--white);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;min-height:100vh;overflow-x:hidden}
@@ -48,24 +48,64 @@ input[type=range]{width:100%;accent-color:var(--lime)}.segmented{display:grid;gr
 footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font-size:10px;color:#666d79;letter-spacing:.04em;line-height:1.8}
 @media(max-width:760px){.hero{grid-template-columns:1fr;gap:24px;padding-top:52px}.hero-note{min-height:145px}.cards{grid-template-columns:1fr}.choice{min-height:310px}.workbench{grid-template-columns:1fr}.stage,.drink-stage{min-height:410px}.scene-head{align-items:flex-start}.top-right{font-size:9px}.art{width:43%}.hero h1{font-size:clamp(48px,13vw,78px)}}
 @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+/* daelimanjog: immersive full-screen scene modal */
+.brand{display:flex;align-items:center;gap:9px;letter-spacing:0;font-size:15px}
+.logo-mark{width:27px;height:27px;border-radius:9px;background:var(--lime);color:#10120b;display:grid;place-items:center;font-size:19px;font-weight:950;letter-spacing:-.1em;position:relative}
+.logo-mark span{font-size:8px;position:absolute;right:4px;top:3px;color:#10120b}
+.brand-name{font-size:14px;font-weight:850;letter-spacing:-.055em}
+.brand sup{font-size:9px;color:#8e94a0;margin-left:-7px;align-self:flex-start;margin-top:2px}
+.topbar{background:rgba(8,9,12,.78);backdrop-filter:blur(18px)}
+.scene.active{position:fixed;inset:0;z-index:15;display:block;overflow:auto;background:radial-gradient(ellipse at 50% 0%,rgba(67,78,90,.24),transparent 45%),rgba(5,6,8,.97);backdrop-filter:blur(24px);padding:26px clamp(14px,4vw,54px) 44px;animation:modalIn .35s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.985)}to{opacity:1;transform:scale(1)}}
+.scene.active .scene-head,.scene.active .workbench{width:min(1380px,100%);margin-left:auto;margin-right:auto}
+.scene.active .scene-head{padding-top:12px}
+.scene.active .workbench{grid-template-columns:minmax(0,1.45fr) minmax(300px,.55fr)}
+.scene.active .stage,.scene.active .drink-stage{height:min(68vh,760px);min-height:500px;border-radius:28px;border-color:rgba(255,255,255,.14);box-shadow:inset 0 1px rgba(255,255,255,.07),0 35px 100px #0008}
+.scene.active .panel{align-self:stretch;background:linear-gradient(155deg,#171a20,#0b0d11);border-radius:25px;box-shadow:0 25px 80px #0005}
+.scene.active .back{background:rgba(255,255,255,.06);color:#f1f2f4;backdrop-filter:blur(12px)}
+.stage,.drink-stage{isolation:isolate}
+.stage:after,.drink-stage:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(125deg,rgba(255,255,255,.045),transparent 23%,transparent 72%,rgba(255,255,255,.025));z-index:0}
+.stage-label,.stage-state,.stage-bottom{z-index:4}
+.cig-scene{filter:drop-shadow(0 18px 17px #0009)}
+.cig-body{background:linear-gradient(180deg,#fffef7 0%,#e9e6db 42%,#c6c3b8 100%);box-shadow:inset 0 1px 2px #fff,0 12px 30px #0009}
+.cig-body:before{background:repeating-linear-gradient(90deg,#9e674c 0 2px,#c18b69 2px 4px),linear-gradient(#c78a64,#8f4c2f)}
+.ember{background:radial-gradient(circle at 40% 45%,#fff8cf 0,#ffc56b 20%,#ff7139 50%,#742716 85%);box-shadow:0 0 12px #ff9b55,0 0 34px #ff703c99,0 0 65px #ff6b3033}
+.bottle-large{border:1px solid rgba(255,255,255,.24);box-shadow:inset 5px 0 8px #ffffff30,inset -7px 0 10px #12201966,0 26px 60px #000b;filter:saturate(.85)}
+.bottle-large:before{box-shadow:inset 4px 0 5px #fff5,inset -3px 0 4px #0003}
+.bottle-large:after{box-shadow:0 0 8px #fff5;border:1px solid #ffffff80}
+.glass{background:linear-gradient(100deg,#ffffff0a,#ffffff20 20%,#ffffff04 45%,#ffffff18 75%,#ffffff05);box-shadow:inset 5px 0 9px #ffffff0c,inset -5px 0 9px #ffffff08,0 18px 24px #0005}
+.glass.filled{border-color:#dceaf4a8}
+.glass.filled:before{height:var(--liquid-level,72%);background:linear-gradient(90deg,#b4d5e833,#f4fbff7a 28%,#a8cbe266 75%,#d8ebf855);border-top:1px solid #f1fbffbb;box-shadow:0 -2px 8px #d8efff35}
+.pour-stream{filter:blur(.3px);box-shadow:0 0 8px #e4f5ff88}
+.stage-action{position:absolute;z-index:5;bottom:63px;left:50%;transform:translateX(-50%);border:1px solid #ffffff36;background:rgba(12,14,18,.62);backdrop-filter:blur(16px);border-radius:999px;padding:12px 18px;color:#f6f7f9;font-size:11px;letter-spacing:.1em;white-space:nowrap;box-shadow:0 8px 25px #0004;transition:.2s}
+.stage-action:hover{background:var(--lime);color:#11140a;border-color:var(--lime)}
+.drink-stage .stage-action{bottom:25px}
+.brand-options button{position:relative;overflow:hidden}
+.brand-options button.selected{box-shadow:0 0 0 1px #e0ff88,0 6px 18px #d9ff6810}
+.choice{box-shadow:inset 0 1px rgba(255,255,255,.035),0 18px 60px #0002}
+.choice:after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(120deg,rgba(255,255,255,.045),transparent 35%)}
+.choice h2{position:relative;z-index:1}
+@media(max-width:760px){.scene.active{padding:15px 12px 30px}.scene.active .scene-head{padding-top:4px}.scene.active .workbench{grid-template-columns:1fr}.scene.active .stage,.scene.active .drink-stage{height:53vh;min-height:380px}.scene.active .panel{padding:20px}.scene.active .scene-head{gap:8px}.scene.active .scene-head h2{font-size:35px}.scene.active .back{padding:9px 11px}.stage-action{bottom:56px}.drink-stage .stage-action{bottom:18px}}
+
 </style>
 </head>
 <body>
 <div class="age-overlay" id="ageGate" role="dialog" aria-modal="true" aria-labelledby="ageTitle">
   <div class="age-card">
-    <div class="age-mark">AFTERHOURS / PRIVATE SIMULATION</div>
+    <div class="age-mark">daelimanjog / PRIVATE SIMULATION</div>
     <h2 id="ageTitle">잠깐,<br>입장 전에.</h2>
-    <p>이 공간은 성인 사용자를 위한 가상 흡연·음주 분위기 시뮬레이터입니다. 실제 담배나 술은 제공하지 않으며, 화면 속 연출만 재생됩니다.</p>
+    <p>이 공간은 한국식 나이 기준 성인 사용자를 위한 가상 흡연·음주 분위기 시뮬레이터입니다. 실제 담배나 술은 제공하지 않으며, 화면 속 연출만 재생됩니다.</p>
     <label class="date-field" for="birthDate">생년월일을 입력해 주세요 <input type="date" id="birthDate" autocomplete="bday"></label>
     <div class="age-error" id="ageError" aria-live="polite"></div>
-    <button class="primary" id="enterBtn">성인 확인 후 입장하기 ↗</button>
-    <p class="age-foot">생년월일은 이 기기에서 나이 확인에만 사용되며 서버로 전송되지 않습니다. 이 화면은 자기 입력 기반 확인이며 실제 신분 확인을 대신하지 않습니다.</p>
+    <button class="primary" id="enterBtn">나이 확인 후 입장하기 ↗</button>
+    <p class="age-foot">한국식 세는나이 기준으로 현재 연도 - 출생 연도 + 1을 계산합니다. 입력한 생년월일은 서버로 전송되지 않으며, 이 화면은 실제 신분 확인을 대신하지 않습니다.</p>
   </div>
 </div>
-<header class="topbar"><div class="brand">AFTER<span>HOURS</span>®</div><div class="top-right">A QUIET PLACE TO RESET&nbsp; / &nbsp; VOL. 001</div></header>
+<header class="topbar"><div class="brand"><span class="logo-mark">d<span>•</span></span><span class="brand-name">daelimanjog</span><sup>®</sup></div><div class="top-right">A LITTLE ESCAPE FROM REALITY&nbsp; / &nbsp; VOL. 001</div></header>
 <div class="wrap">
   <section class="hero">
-    <div><div class="kicker">DIGITAL DOWNTIME</div><h1>Take a breath.<br><em>Take a break.</em></h1><p class="intro">시험 기간의 머릿속 소음을 잠시 낮추는 작은 가상 공간. 연기와 빛, 유리잔의 움직임만으로 만드는 한 템포의 휴식.</p></div>
+    <div><div class="kicker">A DIGITAL NIGHT OUT</div><h1>Take it easy.<br><em>Stay a while.</em></h1><p class="intro">시험 기간의 머릿속 소음을 잠시 낮추는 작은 가상 공간. 연기와 빛, 유리잔의 움직임만으로 만드는 한 템포의 휴식.</p></div>
     <aside class="hero-note"><div class="note-label">A NOTE TO YOURSELF / 01</div><div class="note-title">오늘도 여기까지 온 것만으로.</div><div class="note-copy">잠깐 쉬어도 괜찮아. 이곳의 모든 감각은 가상이며, 원할 때 언제든 나갈 수 있어.</div></aside>
   </section>
   <main>
@@ -79,7 +119,7 @@ footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font
     <section class="scene" id="smokeView">
       <div class="scene-head"><div><div class="kicker">SCENE 01 / EXHALE</div><h2>Virtual Smoke.</h2><p class="scene-sub">버튼을 누르면 가상의 한 모금이 시작됩니다. 실제 연기나 니코틴은 없습니다.</p></div><button class="back" data-back>← 처음으로</button></div>
       <div class="workbench">
-        <div class="stage" id="smokeStage"><div class="stage-label">ATMOSPHERE ENGINE / LIVE</div><div class="stage-state" id="smokeState">READY TO EXHALE</div><canvas id="smokeCanvas"></canvas><div class="cig-scene" id="cigScene"><div class="cig-body"><div class="ember" id="ember"></div><div class="ash" id="ash"></div></div></div><div class="puff-hint" id="puffHint">천천히 숨을 고르고 시작해.</div><div class="stage-bottom"><span>SIMULATED PARTICLES</span><span id="burnLabel">00 / 80 MM</span></div></div>
+        <div class="stage" id="smokeStage"><div class="stage-label">ATMOSPHERE ENGINE / LIVE</div><div class="stage-state" id="smokeState">READY TO EXHALE</div><canvas id="smokeCanvas"></canvas><div class="cig-scene" id="cigScene"><div class="cig-body"><div class="ember" id="ember"></div><div class="ash" id="ash"></div></div></div><button class="stage-action" id="stagePuff">TAP TO EXHALE · 가상으로 피우기</button><div class="puff-hint" id="puffHint">천천히 숨을 고르고 시작해.</div><div class="stage-bottom"><span>SIMULATED PARTICLES</span><span id="burnLabel">00 / 80 MM</span></div></div>
         <aside class="panel"><h3>SCENE CONTROLS</h3>
           <div class="field"><div class="field-head"><label for="smokeDensity">연기 농도</label><output id="densityOut">65%</output></div><input id="smokeDensity" type="range" min="15" max="100" value="65"></div>
           <div class="field"><div class="field-head"><label for="cigLength">가상 담배 길이</label><output id="lengthOut">80 mm</output></div><input id="cigLength" type="range" min="45" max="100" value="80"></div>
@@ -93,7 +133,7 @@ footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font
     <section class="scene" id="drinkView">
       <div class="scene-head"><div><div class="kicker">SCENE 02 / UNWIND</div><h2>Virtual Pour.</h2><p class="scene-sub">브랜드와 잔을 선택하고, 빛과 액체의 움직임을 감상해 봐.</p></div><button class="back" data-back>← 처음으로</button></div>
       <div class="workbench">
-        <div class="drink-stage" id="drinkStage"><div class="stage-label">LIQUID LIGHT / LIVE</div><div class="stage-state" id="drinkState">BOTTLE SELECTED</div><div class="bottle-large" id="bigBottle"><div class="bottle-brand" id="bottleBrand">CHAMISUL</div><div class="bottle-tag" id="bottleTag">FRESH / ORIGINAL</div></div><div class="pour-stream" id="pourStream"></div><div class="glass" id="glass"></div><div class="stage-bottom"><span>PURELY VISUAL SIMULATION</span><span id="glassLabel">GLASS / EMPTY</span></div></div>
+        <div class="drink-stage" id="drinkStage"><div class="stage-label">LIQUID LIGHT / LIVE</div><div class="stage-state" id="drinkState">BOTTLE SELECTED</div><div class="bottle-large" id="bigBottle" role="button" tabindex="0" aria-label="병을 눌러 가상으로 따르기"><div class="bottle-brand" id="bottleBrand">CHAMISUL</div><div class="bottle-tag" id="bottleTag">FRESH / ORIGINAL</div></div><div class="pour-stream" id="pourStream"></div><div class="glass" id="glass" role="button" tabindex="0" aria-label="잔을 눌러 가상으로 마시기"></div><button class="stage-action" id="stagePour">TAP BOTTLE TO POUR · 병을 눌러 따르기</button><div class="stage-bottom"><span>PURELY VISUAL SIMULATION</span><span id="glassLabel">GLASS / EMPTY</span></div></div>
         <aside class="panel"><h3>CHOOSE YOUR BOTTLE</h3>
           <div class="brand-options" id="drinkBrands"><button class="selected" data-brand="chamisul"><span>참이슬</span><span>FRESH / ORIGINAL</span></button><button data-brand="jinro"><span>진로</span><span>CLASSIC BLUE</span></button><button data-brand="saero"><span>새로</span><span>ZERO SUGAR</span></button></div>
           <div class="field"><div class="field-head"><label>잔에 담기는 양</label><output id="pourOut">1회</output></div><div class="segmented" id="pourAmount"><button data-amount="1" class="selected">ONE</button><button data-amount="2">DOUBLE</button><button data-amount="3">FULL</button></div></div>
@@ -105,7 +145,7 @@ footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font
     </section>
   </main>
 </div>
-<footer>AFTERHOURS® · A DIGITAL PAUSE, NOT A REAL SUBSTANCE<br>실제 담배·주류를 제공하거나 판매하지 않는 가상 시뮬레이션입니다. 휴식이 필요하면 화면을 닫고 물 한 잔과 짧은 산책도 선택해 보세요.</footer>
+<footer>daelimanjog® · A DIGITAL PAUSE, NOT A REAL SUBSTANCE<br>실제 담배·주류를 제공하거나 판매하지 않는 가상 시뮬레이션입니다. 휴식이 필요하면 화면을 닫고 물 한 잔과 짧은 산책도 선택해 보세요.</footer>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 <script>
 (() => {
@@ -113,14 +153,14 @@ footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font
   const $$ = s => [...document.querySelectorAll(s)];
   const home = $('#homeView'), smokeView = $('#smokeView'), drinkView = $('#drinkView');
   const toast = (msg) => { const t=$('#toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toast.timer); toast.timer=setTimeout(()=>t.classList.remove('show'),2300); };
-  const calculateAge = date => { const b=new Date(date+'T00:00:00'); const now=new Date(); let age=now.getFullYear()-b.getFullYear(); if(now.getMonth()<b.getMonth() || (now.getMonth()===b.getMonth() && now.getDate()<b.getDate())) age--; return age; };
-  $('#birthDate').max = new Date().toISOString().slice(0,10);
+  const calculateAge = date => { const b=new Date(date+'T00:00:00'); const now=new Date(); return now.getFullYear()-b.getFullYear()+1; };
+  $('#birthDate').max = (()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0')})();
   $('#enterBtn').addEventListener('click', () => {
     const val=$('#birthDate').value, err=$('#ageError');
     if(!val){err.textContent='생년월일을 먼저 입력해 주세요.';return;}
     const age=calculateAge(val);
     if(age<0 || age>120){err.textContent='올바른 생년월일을 입력해 주세요.';return;}
-    if(age<20){err.textContent='이 공간은 만 20세 이상만 이용할 수 있어요.';return;}
+    if(age<20){err.textContent='이 공간은 한국식 나이 기준 20살 이상만 이용할 수 있어요.';return;}
     $('#ageGate').style.display='none';
   });
   function showScene(which){home.style.display='none'; smokeView.classList.toggle('active',which==='smoke');drinkView.classList.toggle('active',which==='drink');window.scrollTo({top:0,behavior:'smooth'});if(which==='smoke')resizeCanvas();}
@@ -144,10 +184,24 @@ footer{border-top:1px solid var(--line);padding:25px 20px;text-align:center;font
   let selectedBrand='chamisul',amount=1,pours=0,level=0;
   $$('#drinkBrands button').forEach(b=>b.onclick=()=>{selectedBrand=b.dataset.brand;$$('#drinkBrands button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');const d=brands[selectedBrand];$('#bigBottle').style.background=d.color;$('#bottleBrand').textContent=d.label;$('#bottleBrand').style.color=d.ink;$('#bottleTag').textContent=d.tag;$('#drinkState').textContent='BOTTLE SELECTED';});
   $$('#pourAmount button').forEach(b=>b.onclick=()=>{amount=+b.dataset.amount;$$('#pourAmount button').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');$('#pourOut').textContent=amount===1?'1회':amount===2?'2회':'가득';});
-  function updateDrink(){const pct=Math.min(100,level);$('#glassLevel').textContent=pct+'%';$('#pourCount').textContent=String(pours).padStart(2,'0');$('#glass').classList.toggle('filled',pct>0);$('#glass').style.setProperty('--level',pct+'%');$('#glassLabel').textContent=pct>=100?'GLASS / FULL':pct>0?'GLASS / '+pct+'%':'GLASS / EMPTY';$('#glass').style.background=pct>0?`linear-gradient(to top, rgba(207,226,239,${.2+pct/250}) ${pct}%, transparent ${pct}%)`:'transparent';}
+  function updateDrink(){const pct=Math.min(100,level);$('#glassLevel').textContent=pct+'%';$('#pourCount').textContent=String(pours).padStart(2,'0');$('#glass').classList.toggle('filled',pct>0);$('#glass').style.setProperty('--level',pct+'%');$('#glass').style.setProperty('--liquid-level',pct+'%');$('#glassLabel').textContent=pct>=100?'GLASS / FULL':pct>0?'GLASS / '+pct+'%':'GLASS / EMPTY';$('#glass').style.background=pct>0?`linear-gradient(to top, rgba(207,226,239,${.2+pct/250}) ${pct}%, transparent ${pct}%)`:'transparent';}
   $('#pourBtn').onclick=()=>{if(level>=100){toast('잔이 가득 찼어요. 먼저 잔을 비워 주세요.');return;}pours++;level=Math.min(100,level+amount*28);$('#pourStream').classList.remove('active');void $('#pourStream').offsetWidth;$('#pourStream').classList.add('active');$('#drinkState').textContent='POURING / '+brands[selectedBrand].label;updateDrink();setTimeout(()=>$('#drinkState').textContent='READY TO POUR',900);};
   $('#emptyGlass').onclick=()=>{level=0;updateDrink();$('#drinkState').textContent='GLASS EMPTIED';toast('가상 잔을 비웠어요.');};
   updateDrink();
+
+  // Immersive stage actions: click the cigarette to puff, bottle to pour, glass to sip.
+  $('#stagePuff').addEventListener('click', () => $('#puffBtn').click());
+  $('#cigScene').style.cursor='pointer';
+  $('#cigScene').title='눌러서 가상으로 피우기';
+  $('#cigScene').addEventListener('click', () => $('#puffBtn').click());
+  $('#stagePour').addEventListener('click', () => $('#pourBtn').click());
+  $('#bigBottle').style.cursor='pointer';
+  $('#bigBottle').addEventListener('click', () => $('#pourBtn').click());
+  $('#bigBottle').addEventListener('keydown', e => { if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#pourBtn').click();} });
+  function sipVirtual(){ if(level<=0){toast('먼저 병을 눌러 가상 잔을 채워 주세요.');return;} level=Math.max(0,level-24); updateDrink(); $('#drinkState').textContent='A QUIET SIP'; toast('가상의 한 모금. 잠깐 쉬어 가요.'); }
+  $('#glass').addEventListener('click', sipVirtual);
+  $('#glass').addEventListener('keydown', e => {if(e.key==='Enter'||e.key===' '){e.preventDefault();sipVirtual();}});
+
 })();
 </script>
 </body>
