@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#171717">
-<title>DATE</title>
+<title>WONI DATE</title>
 <style>
 :root{--bg:#171717;--panel:#222;--text:#f4f4f4;--muted:#a3a3a3;--line:#3a3a3a}
 *{box-sizing:border-box}
@@ -67,7 +67,7 @@ const statusText=document.getElementById('status');
 const hint=document.getElementById('photoHint');
 const defaultImage='images/won/index.png';
 const actionImages={
-  cafe:'good',
+  cafe:'cafe',
   walk:'walk',
   food:'food',
   photo:'photo',
@@ -100,24 +100,37 @@ function setDefault(){
   photoArea.classList.remove('dragover');
 }
 function randomFileFromFolder(folder,done){
-  // 브라우저에서는 폴더 내용을 직접 조회할 수 없으므로 파일명을 목록으로 지정해 둡니다.
-  // 아래 목록을 실제 images/one 폴더의 파일명과 맞춰 주세요.
-  const files=[
-    '1.gif','2.gif','3.gif','4.gif','5.gif',
-    '1.png','2.png','3.png','4.png','5.png',
-    '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg',
-    '1.webp','2.webp','3.webp','4.webp','5.webp'
+  // images/won 폴더에 실제로 있는 파일명 목록
+  const files = [
+    'angry.jpeg',
+    'good.jpeg',
+    'good2.jpeg',
+    'good3.jpeg',
+    'haha.png',
+    'loveyou.jpeg',
+    'power.gif',
+    'power2.png',
+    'wtf.png'
   ];
-  const shuffled=files.sort(()=>Math.random()-.5);
-  let index=0;
+
+  // 매번 다른 이미지 하나를 무작위로 선택
+  const shuffled = [...files].sort(() => Math.random() - 0.5);
+  let index = 0;
+
   function tryNext(){
-    if(index>=shuffled.length){done(null);return}
-    const url=folder+'/'+shuffled[index++];
-    const probe=new Image();
-    probe.onload=()=>done(url);
-    probe.onerror=tryNext;
-    probe.src=url;
+    if(index >= shuffled.length){
+      done(null);
+      return;
+    }
+
+    const url = `${folder}/${shuffled[index++]}`;
+    const probe = new Image();
+
+    probe.onload = () => done(url);
+    probe.onerror = tryNext;
+    probe.src = url;
   }
+
   tryNext();
 }
 function playAction(action){
@@ -125,13 +138,13 @@ function playAction(action){
   photoArea.classList.remove('dragover');
   hint.textContent='데이트 중...';
   statusText.textContent=messages[action]+' · '+city;
-  randomFileFromFolder('/images/won/',url=>{
+  randomFileFromFolder('images/won',url=>{
     if(url){
-      photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 찾지 못했어요. images/one 파일명을 확인해 주세요.'};
+      photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 찾지 못했어요. images/won 파일명을 확인해 주세요.'};
       photo.src=url;
     }else{
       // 파일명이 목록과 다르면 안내 후 기본 이미지로 돌아갑니다.
-      statusText.textContent='images/one에서 이미지를 찾지 못했어요. 파일명을 확인해 주세요.';
+      statusText.textContent='images/won에서 이미지를 찾지 못했어요. 파일명을 확인해 주세요.';
     }
     resetTimer=setTimeout(setDefault,3000);
   });
