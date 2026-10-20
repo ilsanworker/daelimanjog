@@ -5,850 +5,150 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="theme-color" content="#171717">
 <title>DATE</title>
-
 <style>
-:root {
-  --bg: #171717;
-  --panel: #222;
-  --text: #f4f4f4;
-  --muted: #a3a3a3;
-  --line: #3a3a3a;
-}
-
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-html,
-body {
-  margin: 0;
-  width: 100%;
-  height: 100%;
-  background: var(--bg);
-  color: var(--text);
-  font-family: Arial, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-}
-
-body {
-  overflow: hidden;
-  overscroll-behavior: none;
-}
-
-button {
-  font: inherit;
-  cursor: pointer;
-}
-
-.app {
-  width: min(100%, 720px);
-  height: 100vh;
-  height: 100dvh;
-  margin: auto;
-  padding: 12px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-header {
-  min-height: 28px;
-  flex: none;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.brand {
-  font-weight: 900;
-  font-size: 14px;
-  letter-spacing: .04em;
-}
-
-.brand span {
-  color: #aaa;
-}
-
-.place {
-  display: flex;
-  gap: 6px;
-  align-items: center;
-}
-
-.place-label {
-  font-size: 11px;
-  color: var(--muted);
-  margin-right: 3px;
-}
-
-.place button {
-  border: 1px solid #444;
-  background: #222;
-  color: #ddd;
-  border-radius: 8px;
-  padding: 7px 11px;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-.place button.active {
-  background: #eee;
-  color: #171717;
-  border-color: #eee;
-  font-weight: 700;
-}
-
-.main {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-
-.photo-area {
-  position: relative;
-  width: min(100%, 430px);
-  height: min(61vh, 510px);
-  height: min(61dvh, 510px);
-  min-height: 190px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  transition: background .15s, outline-color .15s;
-}
-
-.photo-area.dragover {
-  outline: 2px dashed #888;
-  outline-offset: 4px;
-  background: #ffffff06;
-}
-
-#personPhoto {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  user-select: none;
-  -webkit-user-drag: none;
-  pointer-events: none;
-  transition: opacity .12s;
-}
-
-.photo-hint {
-  position: absolute;
-  bottom: 7px;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  background: #111b;
-  color: #ccc;
-  padding: 6px 9px;
-  border-radius: 7px;
-  font-size: 10px;
-  pointer-events: none;
-}
-
-.actions-wrap {
-  width: min(100%, 650px);
-  flex: none;
-  background: transparent;
-  border: 0;
-  border-radius: 0;
-  padding: 0;
-  box-shadow: none;
-}
-
-.title {
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0 0 9px;
-  text-align: center;
-}
-
-.actions {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 7px;
-}
-
-.action {
-  position: relative;
-  border: 1px solid #424242;
-  background: transparent;
-  color: #eee;
-  border-radius: 9px;
-  min-height: 58px;
-  padding: 7px 3px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-  transition:
-    background .15s,
-    border-color .15s,
-    transform .15s,
-    opacity .15s;
-
-  /* 모바일 터치 드래그의 핵심 */
-  touch-action: none;
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-}
-
-.action:hover,
-.action:focus-visible {
-  background: #333;
-  border-color: #777;
-  outline: none;
-}
-
-.action.dragging {
-  opacity: .45;
-  transform: scale(.96);
-}
-
-.action .emoji {
-  font-size: 19px;
-  line-height: 1;
-  pointer-events: none;
-}
-
-.action strong {
-  font-size: 10px;
-  font-weight: 700;
-  white-space: nowrap;
-  pointer-events: none;
-}
-
-.status {
-  min-height: 18px;
-  text-align: center;
-  font-size: 11px;
-  color: #aaa;
-}
-
-/* 손가락으로 끌 때 나타나는 미리보기 */
-.drag-ghost {
-  position: fixed;
-  z-index: 99999;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-  pointer-events: none;
-  padding: 12px 16px;
-  background: #eeeeee;
-  color: #171717;
-  border-radius: 12px;
-  font-size: 13px;
-  font-weight: 700;
-  white-space: nowrap;
-  box-shadow: 0 8px 30px #0008;
-  opacity: .95;
-}
-
-.drag-ghost[hidden] {
-  display: none;
-}
-
-@media (max-width: 430px) {
-  .app {
-    padding: 9px 10px;
-    gap: 7px;
-  }
-
-  header {
-    height: auto;
-    justify-content: center;
-  }
-
-  .brand {
-    margin-right: auto;
-  }
-
-  .place {
-    gap: 4px;
-  }
-
-  .place button {
-    padding: 7px 8px;
-    font-size: 11px;
-  }
-
-  .place-label {
-    font-size: 10px;
-  }
-
-  .photo-area {
-    height: min(56vh, 440px);
-    height: min(56dvh, 440px);
-    min-height: 170px;
-  }
-
-  .actions {
-    gap: 5px;
-  }
-
-  .action {
-    min-height: 68px;
-    border-radius: 8px;
-  }
-
-  .action .emoji {
-    font-size: 20px;
-  }
-
-  .action strong {
-    font-size: 10px;
-  }
-
-  .title {
-    margin-bottom: 7px;
-  }
-}
-
-@media (max-height: 620px) {
-  .app {
-    padding: 6px 12px;
-    gap: 5px;
-  }
-
-  .photo-area {
-    height: calc(100dvh - 190px);
-    min-height: 145px;
-    max-height: 390px;
-  }
-
-  .action {
-    min-height: 56px;
-    padding: 6px 2px;
-    gap: 5px;
-  }
-
-  .action .emoji {
-    font-size: 18px;
-  }
-
-  .title {
-    margin-bottom: 5px;
-  }
-
-  .status {
-    min-height: 12px;
-  }
-}
+:root{--bg:#171717;--panel:#222;--text:#f4f4f4;--muted:#a3a3a3;--line:#3a3a3a}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Arial,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow:hidden;overscroll-behavior:none}
+button{font:inherit;cursor:pointer}
+.app{width:min(100%,720px);height:100vh;height:100dvh;margin:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+header{min-height:28px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.brand{font-weight:900;font-size:14px;letter-spacing:.04em}.brand span{color:#aaa}
+.place{display:flex;gap:6px;align-items:center}.place-label{font-size:11px;color:var(--muted);margin-right:3px}
+.place button{border:1px solid #444;background:#222;color:#ddd;border-radius:8px;padding:7px 11px;font-size:12px;white-space:nowrap}
+.place button.active{background:#eee;color:#171717;border-color:#eee;font-weight:700}
+.main{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.photo-area{position:relative;width:min(100%,430px);height:min(61vh,510px);height:min(61dvh,510px);min-height:190px;display:flex;align-items:center;justify-content:center;border-radius:12px;transition:background .15s,outline-color .15s}
+.photo-area.dragover{outline:2px dashed #888;outline-offset:4px;background:#ffffff06}
+#personPhoto,#personVideo{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;pointer-events:none}
+#personPhoto{transition:opacity .12s}#personVideo{display:none;background:transparent}
+.photo-hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#111b;color:#ccc;padding:6px 9px;border-radius:7px;font-size:10px;pointer-events:none}
+.actions-wrap{width:min(100%,650px);flex:none;background:transparent;border:0;border-radius:0;padding:0;box-shadow:none}
+.title{font-size:13px;font-weight:700;margin:0 0 9px;text-align:center}
+.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.action{position:relative;border:1px solid #424242;background:transparent;color:#eee;border-radius:9px;min-height:58px;padding:7px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:background .15s,border-color .15s,transform .15s,opacity .15s;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}
+.action:hover,.action:focus-visible{background:#333;border-color:#777;outline:none}.action.dragging{opacity:.45;transform:scale(.96)}
+.action .emoji{font-size:19px;line-height:1;pointer-events:none}.action strong{font-size:10px;font-weight:700;white-space:nowrap;pointer-events:none}
+.status{min-height:18px;text-align:center;font-size:11px;color:#aaa}
+.drag-ghost{position:fixed;z-index:99999;left:0;top:0;transform:translate(-50%,-50%);pointer-events:none;padding:12px 16px;background:#eee;color:#171717;border-radius:12px;font-size:13px;font-weight:700;white-space:nowrap;box-shadow:0 8px 30px #0008;opacity:.95}
+.drag-ghost[hidden]{display:none}
+@media(max-width:430px){.app{padding:9px 10px;gap:7px}header{height:auto;justify-content:center}.brand{margin-right:auto}.place{gap:4px}.place button{padding:7px 8px;font-size:11px}.place-label{font-size:10px}.photo-area{height:min(56vh,440px);height:min(56dvh,440px);min-height:170px}.actions{gap:5px}.action{min-height:68px;border-radius:8px}.action .emoji{font-size:20px}.action strong{font-size:10px}.title{margin-bottom:7px}}
+@media(max-height:620px){.app{padding:6px 12px;gap:5px}.photo-area{height:calc(100dvh - 190px);min-height:145px;max-height:390px}.action{min-height:56px;padding:6px 2px;gap:5px}.action .emoji{font-size:18px}.title{margin-bottom:5px}.status{min-height:12px}}
 </style>
 </head>
-
 <body>
-
 <div class="app">
-
   <header>
     <div class="brand">WONI <span>DATE</span></div>
-
-    <div class="place people">
-      <span class="place-label">상대</span>
-      <button class="active" data-person="원이">리센느 원이</button>
-      <button data-person="고윤정">고윤정</button>
-    </div>
-
-    <div class="place cities">
-      <span class="place-label">장소</span>
-      <button class="active" data-city="서울">서울</button>
-      <button data-city="부산">부산</button>
-      <button data-city="제주도">제주도</button>
-    </div>
+    <div class="place people"><span class="place-label">상대</span><button class="active" data-person="원이">리센느 원이</button><button data-person="고윤정">고윤정</button></div>
+    <div class="place cities"><span class="place-label">장소</span><button class="active" data-city="서울">서울</button><button data-city="부산">부산</button><button data-city="제주도">제주도</button></div>
   </header>
-
   <main class="main">
-
-    <div class="photo-area" id="photoArea" aria-label="사진 드롭 영역">
-      <img
-        id="personPhoto"
-        src="images/won/index.png"
-        alt="리센느 원이"
-        draggable="false"
-      >
-      <div class="photo-hint" id="photoHint">
-        선택지를 사진 위로 드래그
-      </div>
+    <div class="photo-area" id="photoArea" aria-label="사진 및 동영상 드롭 영역">
+      <img id="personPhoto" src="images/won/index.png" alt="리센느 원이" draggable="false">
+      <video id="personVideo" playsinline muted preload="metadata"></video>
+      <div class="photo-hint" id="photoHint">선택지를 사진 위로 드래그</div>
     </div>
-
-    <section class="actions-wrap">
-      <p class="title">무엇을 할까?</p>
-      <div class="actions" id="actions"></div>
-    </section>
-
-    <div class="status" id="status" aria-live="polite">
-      선택지를 사진 위로 드래그하거나 눌러 봐.
-    </div>
-
+    <section class="actions-wrap"><p class="title">무엇을 할까?</p><div class="actions" id="actions"></div></section>
+    <div class="status" id="status" aria-live="polite">선택지를 사진 위로 드래그하거나 눌러 봐.</div>
   </main>
-
 </div>
-
-<!-- 모바일 드래그 미리보기 -->
 <div class="drag-ghost" id="dragGhost" hidden></div>
-
 <script>
-const photoArea = document.getElementById('photoArea');
-const photo = document.getElementById('personPhoto');
-const statusText = document.getElementById('status');
-const hint = document.getElementById('photoHint');
-const actionGrid = document.getElementById('actions');
-const dragGhost = document.getElementById('dragGhost');
-
-const defaultImage = 'images/won/index.png';
-
-const actions = [
-  ['cafe', '☕', '카페 가기', '카페 데이트 중!'],
-  ['walk', '🌆', '산책하기', '함께 산책하는 중!'],
-  ['food', '🍜', '맛집 가기', '맛집 데이트 중!'],
-  ['photo', '📸', '사진 찍기', '사진을 찍는 중!'],
-  ['gift', '🎁', '선물 주기', '선물을 건넸어!'],
-  ['movie', '🎬', '영화 보기', '같이 영화를 보는 중!'],
-  ['shopping', '🛍️', '쇼핑하기', '함께 쇼핑하는 중!'],
-  ['arcade', '🕹️', '오락실 가기', '오락실에서 노는 중!'],
-  ['karaoke', '🎤', '노래방 가기', '노래방에서 신나게 노는 중!'],
-  ['dessert', '🍰', '디저트 먹기', '달콤한 디저트를 먹는 중!'],
-  ['beach', '🏖️', '바다 보기', '바다를 보며 쉬는 중!'],
-  ['selfie', '🤳', '셀카 찍기', '셀카를 찍는 중!'],
-  ['flowers', '💐', '꽃 선물하기', '꽃을 선물했어!'],
-  ['music', '🎧', '음악 듣기', '함께 음악을 듣는 중!'],
-  ['drive', '🚗', '드라이브', '드라이브를 즐기는 중!']
+const photoArea=document.getElementById('photoArea');
+const photo=document.getElementById('personPhoto');
+const video=document.getElementById('personVideo');
+const statusText=document.getElementById('status');
+const hint=document.getElementById('photoHint');
+const actionGrid=document.getElementById('actions');
+const dragGhost=document.getElementById('dragGhost');
+const defaultImage='images/won/index.png';
+const actions=[
+ ['cafe','☕','카페 가기','카페 데이트 중!'],['walk','🌆','산책하기','함께 산책하는 중!'],['food','🍜','맛집 가기','맛집 데이트 중!'],['photo','📸','사진 찍기','사진을 찍는 중!'],['gift','🎁','선물 주기','선물을 건넸어!'],['movie','🎬','영화 보기','같이 영화를 보는 중!'],['shopping','🛍️','쇼핑하기','함께 쇼핑하는 중!'],['arcade','🕹️','오락실 가기','오락실에서 노는 중!'],['karaoke','🎤','노래방 가기','노래방에서 신나게 노는 중!'],['dessert','🍰','디저트 먹기','달콤한 디저트를 먹는 중!'],['beach','🏖️','바다 보기','바다를 보며 쉬는 중!'],['selfie','🤳','셀카 찍기','셀카를 찍는 중!'],['flowers','💐','꽃 선물하기','꽃을 선물했어!'],['music','🎧','음악 듣기','함께 음악을 듣는 중!'],['drive','🚗','드라이브','드라이브를 즐기는 중!']
 ];
+const messages=Object.fromEntries(actions.map(item=>[item[0],item[3]]));
+let resetTimer=null, city='서울', person='원이', playToken=0;
+const personFolders={'원이':'images/won','고윤정':'images/go'};
+const defaultImages={'원이':'images/won/index.png','고윤정':'images/go/index.png'};
 
-const messages = Object.fromEntries(
-  actions.map(item => [item[0], item[3]])
-);
-
-let resetTimer = null;
-let city = '서울';
-let person = '원이';
-
-const personFolders = {
-  '원이': 'images/won',
-  '고윤정': 'images/go'
-};
-
-const defaultImages = {
-  '원이': 'images/won/index.png',
-  '고윤정': 'images/go/index.png'
-};
-
-/* 랜덤 선택지 5개 */
-function renderRandomActions() {
-  actionGrid.innerHTML = '';
-
-  const shuffled = [...actions];
-
-  // 편향이 생기지 않도록 Fisher-Yates 셔플
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-
-  shuffled.slice(0, 5).forEach(([key, emoji, label]) => {
-    const button = document.createElement('button');
-
-    button.className = 'action';
-    button.dataset.action = key;
-    button.draggable = true;
-    button.innerHTML = `
-      <span class="emoji">${emoji}</span>
-      <strong>${label}</strong>
-    `;
-
-    actionGrid.appendChild(button);
-  });
+function renderRandomActions(){
+ actionGrid.innerHTML=''; const shuffled=[...actions];
+ for(let i=shuffled.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[shuffled[i],shuffled[j]]=[shuffled[j],shuffled[i]];}
+ shuffled.slice(0,5).forEach(([key,emoji,label])=>{const button=document.createElement('button');button.className='action';button.dataset.action=key;button.draggable=true;button.innerHTML=`<span class="emoji">${emoji}</span><strong>${label}</strong>`;actionGrid.appendChild(button);});
 }
-
 renderRandomActions();
 
-/* 인물 선택 */
-document.querySelectorAll('[data-person]').forEach(button => {
-  button.addEventListener('click', () => {
-    person = button.dataset.person;
+document.querySelectorAll('[data-person]').forEach(button=>button.addEventListener('click',()=>{person=button.dataset.person;document.querySelectorAll('[data-person]').forEach(item=>item.classList.toggle('active',item===button));photo.alt=person==='원이'?'리센느 원이':'고윤정';setDefault();}));
+document.querySelectorAll('[data-city]').forEach(button=>button.addEventListener('click',()=>{city=button.dataset.city;document.querySelectorAll('[data-city]').forEach(item=>item.classList.toggle('active',item===button));}));
 
-    document.querySelectorAll('[data-person]').forEach(item => {
-      item.classList.toggle('active', item === button);
-    });
+function stopVideo(){video.pause();video.onerror=null;video.onended=null;video.removeAttribute('src');video.load();video.style.display='none';}
+function setDefault(){clearTimeout(resetTimer);playToken++;stopVideo();photo.onerror=null;photo.style.display='block';photo.src=defaultImages[person]||defaultImage;statusText.textContent='선택지를 사진 위로 드래그하거나 눌러 봐.';hint.textContent='선택지를 사진 위로 드래그';photoArea.classList.remove('dragover');}
 
-    photo.alt = person === '원이' ? '리센느 원이' : '고윤정';
-
-    setDefault();
-  });
-});
-
-/* 장소 선택 */
-document.querySelectorAll('[data-city]').forEach(button => {
-  button.addEventListener('click', () => {
-    city = button.dataset.city;
-
-    document.querySelectorAll('[data-city]').forEach(item => {
-      item.classList.toggle('active', item === button);
-    });
-  });
-});
-
-/* 기본 이미지 복귀 */
-function setDefault() {
-  clearTimeout(resetTimer);
-
-  photo.onerror = null;
-  photo.src = defaultImages[person] || defaultImage;
-
-  statusText.textContent = '선택지를 사진 위로 드래그하거나 눌러 봐.';
-  hint.textContent = '선택지를 사진 위로 드래그';
-
-  photoArea.classList.remove('dragover');
+// 파일명을 실제 폴더 내용에 맞게 추가해 주세요. 브라우저는 폴더 파일 목록을 자동 검색하지 않습니다.
+const filesByFolder={
+ 'images/won':['angry.jpeg','good.jpeg','good2.jpeg','good3.jpeg','haha.png','loveyou.jpeg','power.gif','power2.png','wtf.png','won.mp4'],
+ 'images/go':['do.gif','haha2.png']
+};
+function isVideoFile(url){return /\.(mp4|mov|webm|m4v|ogv)$/i.test(url);}
+function randomFileFromFolder(folder,done){
+ const files=[...(filesByFolder[folder]||[])];
+ for(let i=files.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[files[i],files[j]]=[files[j],files[i]];}
+ if(!files.length){done(null);return;}
+ let index=0;
+ function tryNext(){
+  if(index>=files.length){done(null);return;}
+  const url=`${folder}/${files[index++]}`;
+  if(isVideoFile(url)){
+   // MP4는 Image()로 검사하면 항상 실패하므로 video 요소로 확인한다.
+   const probe=document.createElement('video');probe.preload='metadata';
+   const cleanup=()=>{probe.onloadedmetadata=null;probe.onerror=null;};
+   probe.onloadedmetadata=()=>{cleanup();done(url);};
+   probe.onerror=()=>{cleanup();tryNext();};
+   probe.src=url;probe.load();
+  }else{
+   const probe=new Image();probe.onload=()=>done(url);probe.onerror=tryNext;probe.src=url;
+  }
+ }
+ tryNext();
+}
+function playAction(action){
+ clearTimeout(resetTimer);const token=++playToken;photoArea.classList.remove('dragover');hint.textContent='데이트 중...';statusText.textContent=(messages[action]||'데이트 중!')+' · '+city;
+ const currentPerson=person;
+ randomFileFromFolder(personFolders[currentPerson],url=>{
+  if(token!==playToken||currentPerson!==person)return;
+  if(!url){statusText.textContent=`${personFolders[currentPerson]} 폴더의 파일명 또는 경로를 확인해 주세요.`;resetTimer=setTimeout(setDefault,3000);return;}
+  if(isVideoFile(url)){
+   photo.onerror=null;photo.style.display='none';stopVideo();video.style.display='block';video.muted=true;video.playsInline=true;video.src=url;video.currentTime=0;
+   video.onerror=()=>{if(token!==playToken)return;statusText.textContent='동영상을 불러오지 못했어요. 파일 경로와 MP4 인코딩을 확인해 주세요.';};
+   video.play().catch(error=>{if(token===playToken){statusText.textContent='영상 재생에 실패했어요. 화면을 한 번 더 누르거나 MP4 인코딩을 확인해 주세요.';console.error('Video playback failed:',error);}});
+  }else{
+   stopVideo();photo.style.display='block';photo.onerror=()=>{if(token!==playToken)return;photo.onerror=null;statusText.textContent='이미지를 불러오지 못했어요. 파일명을 확인해 주세요.';};photo.src=url;
+  }
+  resetTimer=setTimeout(()=>{if(token===playToken)setDefault();},3000);
+ });
 }
 
-/* 이미지 파일 목록 */
-function randomFileFromFolder(folder, done) {
-  const filesByFolder = {
-    'images/won': [
-      
-      'wtf.png',
-      'won.mp4'
-    ],
-
-    'images/go': [
-      'do.gif',
-      'haha2.png'
-    ]
-  };
-
-  const files = filesByFolder[folder] || [];
-
-  if (files.length === 0) {
-    done(null);
-    return;
-  }
-
-  const shuffled = [...files];
-
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-
-  let index = 0;
-
-  function tryNext() {
-    if (index >= shuffled.length) {
-      done(null);
-      return;
-    }
-
-    const url = `${folder}/${shuffled[index++]}`;
-    const probe = new Image();
-
-    probe.onload = () => done(url);
-    probe.onerror = tryNext;
-    probe.src = url;
-  }
-
-  tryNext();
-}
-
-/* 데이트 액션 실행 */
-function playAction(action) {
-  clearTimeout(resetTimer);
-
-  photoArea.classList.remove('dragover');
-
-  hint.textContent = '데이트 중...';
-  statusText.textContent =
-    (messages[action] || '데이트 중!') + ' · ' + city;
-
-  const currentPerson = person;
-
-  randomFileFromFolder(personFolders[currentPerson], url => {
-    // 이미지 로딩 중 상대를 변경했다면 이전 결과를 적용하지 않음
-    if (currentPerson !== person) return;
-
-    if (url) {
-      photo.onerror = () => {
-        photo.onerror = null;
-        setDefault();
-        statusText.textContent = '이미지를 불러오지 못했어요.';
-      };
-
-      photo.src = url;
-    } else {
-      statusText.textContent =
-        personFolders[currentPerson] +
-        ' 폴더의 이미지 파일명을 확인해 주세요.';
-    }
-
-    resetTimer = setTimeout(setDefault, 3000);
-  });
-}
-
-/* =================================
-   PC: HTML5 드래그 앤 드롭
-================================= */
-
-actionGrid.addEventListener('dragstart', event => {
-  const button = event.target.closest('.action');
-  if (!button) return;
-
-  event.dataTransfer.setData('text/plain', button.dataset.action);
-  event.dataTransfer.effectAllowed = 'copy';
-
-  button.classList.add('dragging');
-});
-
-actionGrid.addEventListener('dragend', event => {
-  const button = event.target.closest('.action');
-
-  if (button) {
-    button.classList.remove('dragging');
-  }
-
-  photoArea.classList.remove('dragover');
-});
-
-photoArea.addEventListener('dragover', event => {
-  event.preventDefault();
-
-  if (event.dataTransfer) {
-    event.dataTransfer.dropEffect = 'copy';
-  }
-
-  photoArea.classList.add('dragover');
-});
-
-photoArea.addEventListener('dragleave', event => {
-  if (!photoArea.contains(event.relatedTarget)) {
-    photoArea.classList.remove('dragover');
-  }
-});
-
-photoArea.addEventListener('drop', event => {
-  event.preventDefault();
-
-  const action = event.dataTransfer.getData('text/plain');
-
-  photoArea.classList.remove('dragover');
-
-  if (action && messages[action]) {
-    playAction(action);
-  }
-});
-
-/* =================================
-   모바일: Pointer Events 터치 드래그
-================================= */
-
-let pointerStart = null;
-let activePointerId = null;
-let currentAction = null;
-let hasMoved = false;
-let longPressTimer = null;
-let dragStarted = false;
-
-const DRAG_THRESHOLD = 10;
-const LONG_PRESS_MS = 180;
-
-function clearLongPress() {
-  if (longPressTimer !== null) {
-    clearTimeout(longPressTimer);
-    longPressTimer = null;
-  }
-}
-
-function isInsidePhoto(x, y) {
-  const rect = photoArea.getBoundingClientRect();
-
-  return (
-    x >= rect.left &&
-    x <= rect.right &&
-    y >= rect.top &&
-    y <= rect.bottom
-  );
-}
-
-function updateGhost(x, y) {
-  const emoji = currentAction ? currentAction.emoji : '';
-  const label = currentAction ? currentAction.label : '';
-
-  dragGhost.textContent = `${emoji} ${label}`;
-  dragGhost.style.left = `${x}px`;
-  dragGhost.style.top = `${y}px`;
-  dragGhost.hidden = false;
-}
-
-function beginTouchDrag(x, y) {
-  if (dragStarted || !currentAction) return;
-
-  dragStarted = true;
-
-  const button = currentAction.button;
-
-  button.classList.add('dragging');
-
-  hint.textContent = '사진 위에 놓기';
-  updateGhost(x, y);
-}
-
-function resetTouchDrag() {
-  clearLongPress();
-
-  if (currentAction && currentAction.button) {
-    currentAction.button.classList.remove('dragging');
-  }
-
-  dragGhost.hidden = true;
-  photoArea.classList.remove('dragover');
-
-  pointerStart = null;
-  activePointerId = null;
-  currentAction = null;
-  hasMoved = false;
-  dragStarted = false;
-}
-
-actionGrid.addEventListener('pointerdown', event => {
-  const button = event.target.closest('.action');
-
-  if (!button) return;
-
-  // 마우스는 PC 드래그 기능 사용
-  if (event.pointerType === 'mouse') return;
-
-  if (activePointerId !== null) return;
-
-  event.preventDefault();
-
-  activePointerId = event.pointerId;
-
-  pointerStart = {
-    x: event.clientX,
-    y: event.clientY
-  };
-
-  currentAction = {
-    key: button.dataset.action,
-    emoji: button.querySelector('.emoji').textContent,
-    label: button.querySelector('strong').textContent,
-    button
-  };
-
-  hasMoved = false;
-  dragStarted = false;
-
-  /*
-    문서에 포인터 이벤트를 연결해 버튼 밖으로 이동해도
-    손가락 위치를 계속 추적한다.
-  */
-  try {
-    button.setPointerCapture(event.pointerId);
-  } catch (_) {}
-
-  // 길게 누르면 드래그 시작
-  longPressTimer = setTimeout(() => {
-    if (activePointerId !== null && currentAction) {
-      beginTouchDrag(
-        pointerStart.x,
-        pointerStart.y
-      );
-    }
-  }, LONG_PRESS_MS);
-});
-
-document.addEventListener('pointermove', event => {
-  if (event.pointerId !== activePointerId || !currentAction) {
-    return;
-  }
-
-  const dx = event.clientX - pointerStart.x;
-  const dy = event.clientY - pointerStart.y;
-  const distance = Math.hypot(dx, dy);
-
-  if (distance > DRAG_THRESHOLD) {
-    hasMoved = true;
-    clearLongPress();
-
-    // 손가락을 움직이기 시작하면 드래그로 전환
-    beginTouchDrag(event.clientX, event.clientY);
-  }
-
-  if (dragStarted) {
-    event.preventDefault();
-
-    updateGhost(event.clientX, event.clientY);
-
-    const inside = isInsidePhoto(
-      event.clientX,
-      event.clientY
-    );
-
-    photoArea.classList.toggle('dragover', inside);
-    hint.textContent = inside ? '여기에 놓기!' : '사진 위로 끌어오기';
-  }
-}, { passive: false });
-
-document.addEventListener('pointerup', event => {
-  if (event.pointerId !== activePointerId || !currentAction) {
-    return;
-  }
-
-  const action = currentAction.key;
-  const x = event.clientX;
-  const y = event.clientY;
-  const wasDragging = dragStarted;
-  const inside = isInsidePhoto(x, y);
-
-  clearLongPress();
-
-  /*
-    드래그해서 사진에 놓았다면 액션 실행.
-    짧게 탭했다면 그 자리에서 바로 실행.
-  */
-  if (wasDragging && inside) {
-    resetTouchDrag();
-    playAction(action);
-    return;
-  }
-
-  if (!wasDragging && !hasMoved) {
-    resetTouchDrag();
-    playAction(action);
-    return;
-  }
-
-  resetTouchDrag();
-
-  if (wasDragging) {
-    hint.textContent = '사진 위에 놓아야 실행돼요.';
-  }
-});
-
-document.addEventListener('pointercancel', event => {
-  if (event.pointerId === activePointerId) {
-    resetTouchDrag();
-  }
-});
-
-/* 기본 이미지 오류 안내 */
-photo.addEventListener('error', () => {
-  if (photo.getAttribute('src') === (defaultImages[person] || defaultImage)) {
-    statusText.textContent =
-      '기본 이미지 경로를 확인해 주세요: ' +
-      (defaultImages[person] || defaultImage);
-  }
-});
+// PC HTML drag-and-drop
+actionGrid.addEventListener('dragstart',event=>{const button=event.target.closest('.action');if(!button)return;event.dataTransfer.setData('text/plain',button.dataset.action);event.dataTransfer.effectAllowed='copy';button.classList.add('dragging');});
+actionGrid.addEventListener('dragend',event=>{const button=event.target.closest('.action');if(button)button.classList.remove('dragging');photoArea.classList.remove('dragover');});
+photoArea.addEventListener('dragover',event=>{event.preventDefault();if(event.dataTransfer)event.dataTransfer.dropEffect='copy';photoArea.classList.add('dragover');});
+photoArea.addEventListener('dragleave',event=>{if(!photoArea.contains(event.relatedTarget))photoArea.classList.remove('dragover');});
+photoArea.addEventListener('drop',event=>{event.preventDefault();const action=event.dataTransfer.getData('text/plain');photoArea.classList.remove('dragover');if(action&&messages[action])playAction(action);});
+actionGrid.addEventListener('click',event=>{const button=event.target.closest('.action');if(button)playAction(button.dataset.action);});
+
+// Mobile pointer/touch drag
+let pointerStart=null,activePointerId=null,currentAction=null,hasMoved=false,longPressTimer=null,dragStarted=false;
+const DRAG_THRESHOLD=10,LONG_PRESS_MS=180;
+function clearLongPress(){if(longPressTimer!==null){clearTimeout(longPressTimer);longPressTimer=null;}}
+function isInsidePhoto(x,y){const r=photoArea.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom;}
+function updateGhost(x,y){dragGhost.textContent=`${currentAction?.emoji||''} ${currentAction?.label||''}`;dragGhost.style.left=`${x}px`;dragGhost.style.top=`${y}px`;dragGhost.hidden=false;}
+function beginTouchDrag(x,y){if(dragStarted||!currentAction)return;dragStarted=true;currentAction.button.classList.add('dragging');hint.textContent='사진 위에 놓기';updateGhost(x,y);}
+function resetTouchDrag(){clearLongPress();if(currentAction?.button)currentAction.button.classList.remove('dragging');dragGhost.hidden=true;photoArea.classList.remove('dragover');pointerStart=null;activePointerId=null;currentAction=null;hasMoved=false;dragStarted=false;}
+actionGrid.addEventListener('pointerdown',event=>{const button=event.target.closest('.action');if(!button||event.pointerType==='mouse'||activePointerId!==null)return;event.preventDefault();activePointerId=event.pointerId;pointerStart={x:event.clientX,y:event.clientY};currentAction={key:button.dataset.action,emoji:button.querySelector('.emoji').textContent,label:button.querySelector('strong').textContent,button};hasMoved=false;dragStarted=false;try{button.setPointerCapture(event.pointerId);}catch(_){}longPressTimer=setTimeout(()=>{if(activePointerId!==null&&currentAction)beginTouchDrag(pointerStart.x,pointerStart.y);},LONG_PRESS_MS);});
+document.addEventListener('pointermove',event=>{if(event.pointerId!==activePointerId||!currentAction)return;const dx=event.clientX-pointerStart.x,dy=event.clientY-pointerStart.y;if(Math.hypot(dx,dy)>DRAG_THRESHOLD){hasMoved=true;clearLongPress();beginTouchDrag(event.clientX,event.clientY);}if(dragStarted){event.preventDefault();updateGhost(event.clientX,event.clientY);const inside=isInsidePhoto(event.clientX,event.clientY);photoArea.classList.toggle('dragover',inside);hint.textContent=inside?'여기에 놓기!':'사진 위로 끌어오기';}},{passive:false});
+document.addEventListener('pointerup',event=>{if(event.pointerId!==activePointerId||!currentAction)return;const action=currentAction.key,inside=isInsidePhoto(event.clientX,event.clientY),wasDragging=dragStarted,wasTap=!wasDragging&&!hasMoved;resetTouchDrag();if(wasDragging&&inside){playAction(action);}else if(wasTap){playAction(action);}else if(wasDragging){hint.textContent='사진 위에 놓아야 실행돼요.';}});
+document.addEventListener('pointercancel',event=>{if(event.pointerId===activePointerId)resetTouchDrag();});
+photo.addEventListener('error',()=>{if(photo.getAttribute('src')===(defaultImages[person]||defaultImage))statusText.textContent='기본 이미지 경로를 확인해 주세요: '+(defaultImages[person]||defaultImage);});
 </script>
-
 </body>
 </html>
