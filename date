@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#171717">
+<title>DATE</title>
+<style>
+:root{--bg:#171717;--panel:#222;--text:#f4f4f4;--muted:#a3a3a3;--line:#3a3a3a}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;background:var(--bg);color:var(--text);font-family:Arial,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{overflow:hidden}
+button{font:inherit;cursor:pointer}
+.app{width:min(100%,720px);height:100dvh;margin:auto;padding:12px 16px;display:flex;flex-direction:column;gap:10px}
+header{height:28px;flex:none;display:flex;align-items:center;justify-content:space-between}
+.brand{font-weight:900;font-size:14px;letter-spacing:.04em}.brand span{color:#aaa}
+.place{display:flex;gap:6px;align-items:center}
+.place-label{font-size:11px;color:var(--muted);margin-right:3px}
+.place button{border:1px solid #444;background:#222;color:#ddd;border-radius:8px;padding:7px 11px;font-size:12px}
+.place button.active{background:#eee;color:#171717;border-color:#eee;font-weight:700}
+.main{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px}
+.photo-area{position:relative;width:min(100%,430px);height:min(61vh,510px);min-height:190px;display:flex;align-items:center;justify-content:center}
+.photo-area.dragover{outline:2px dashed #888;outline-offset:4px;border-radius:12px}
+#personPhoto{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transition:opacity .12s}
+.photo-hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#111b;color:#ccc;padding:6px 9px;border-radius:7px;font-size:10px;pointer-events:none}
+.actions-wrap{width:min(100%,530px);flex:none}
+.title{font-size:13px;font-weight:700;margin:0 0 9px;text-align:center}
+.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.action{border:1px solid #424242;background:#252525;color:#eee;border-radius:10px;min-height:76px;padding:9px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:background .15s,border-color .15s,transform .15s;touch-action:manipulation}
+.action:hover,.action:focus-visible{background:#333;border-color:#777;outline:none}
+.action.dragging{opacity:.45;transform:scale(.96)}
+.action .emoji{font-size:22px;line-height:1}
+.action strong{font-size:11px;font-weight:700;white-space:nowrap}
+.status{min-height:18px;text-align:center;font-size:11px;color:#aaa}
+@media(max-width:430px){.app{padding:9px 10px;gap:7px}.place{gap:4px}.place button{padding:7px 8px;font-size:11px}.photo-area{height:min(56vh,440px);min-height:170px}.actions{gap:5px}.action{min-height:68px;border-radius:8px}.action .emoji{font-size:20px}.action strong{font-size:10px}.title{margin-bottom:7px}}
+@media(max-height:620px){.app{padding:6px 12px;gap:5px}.photo-area{height:calc(100dvh - 190px);min-height:145px;max-height:390px}.action{min-height:56px;padding:6px 2px;gap:5px}.action .emoji{font-size:18px}.title{margin-bottom:5px}.status{min-height:12px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header>
+    <div class="brand">WONI <span>DATE</span></div>
+    <div class="place"><span class="place-label">장소</span><button class="active" data-city="서울">서울</button><button data-city="부산">부산</button><button data-city="제주도">제주도</button></div>
+  </header>
+  <main class="main">
+    <div class="photo-area" id="photoArea" aria-label="원이 사진 드롭 영역">
+      <img id="personPhoto" src="images/won/index.png" alt="리센느 원이" draggable="false">
+      <div class="photo-hint" id="photoHint">선택지를 사진 위로 드래그</div>
+    </div>
+    <section class="actions-wrap">
+      <p class="title">무엇을 할까?</p>
+      <div class="actions" id="actions">
+        <button class="action" draggable="true" data-action="cafe"><span class="emoji">☕</span><strong>카페 가기</strong></button>
+        <button class="action" draggable="true" data-action="walk"><span class="emoji">🌆</span><strong>산책하기</strong></button>
+        <button class="action" draggable="true" data-action="food"><span class="emoji">🍜</span><strong>맛집 가기</strong></button>
+        <button class="action" draggable="true" data-action="photo"><span class="emoji">📸</span><strong>사진 찍기</strong></button>
+        <button class="action" draggable="true" data-action="gift"><span class="emoji">🎁</span><strong>선물 주기</strong></button>
+      </div>
+    </section>
+    <div class="status" id="status" aria-live="polite">선택지를 사진 위로 드래그하거나 눌러 봐.</div>
+  </main>
+</div>
+<script>
+const photoArea=document.getElementById('photoArea');
+const photo=document.getElementById('personPhoto');
+const statusText=document.getElementById('status');
+const hint=document.getElementById('photoHint');
+const defaultImage='images/won/index.png';
+const actionImages={
+  cafe:'cafe',
+  walk:'walk',
+  food:'food',
+  photo:'photo',
+  gift:'gift'
+};
+const messages={
+  cafe:'카페 데이트 중!',
+  walk:'함께 산책하는 중!',
+  food:'맛집 데이트 중!',
+  photo:'사진을 찍는 중!',
+  gift:'선물을 건넸어!'
+};
+let resetTimer=null;
+let currentObjectUrl=null;
+let city='서울';
+
+document.querySelectorAll('[data-city]').forEach(button=>{
+  button.addEventListener('click',()=>{
+    city=button.dataset.city;
+    document.querySelectorAll('[data-city]').forEach(item=>item.classList.toggle('active',item===button));
+  });
+});
+
+function setDefault(){
+  clearTimeout(resetTimer);
+  photo.onerror=null;
+  photo.src=defaultImage;
+  statusText.textContent='선택지를 사진 위로 드래그하거나 눌러 봐.';
+  hint.textContent='선택지를 사진 위로 드래그';
+  photoArea.classList.remove('dragover');
+}
+function randomFileFromFolder(folder,done){
+  // 브라우저에서는 폴더 내용을 직접 조회할 수 없으므로 파일명을 목록으로 지정해 둡니다.
+  // 아래 목록을 실제 images/one 폴더의 파일명과 맞춰 주세요.
+  const files=[
+    '1.gif','2.gif','3.gif','4.gif','5.gif',
+    '1.png','2.png','3.png','4.png','5.png',
+    '1.jpg','2.jpg','3.jpg','4.jpg','5.jpg',
+    '1.webp','2.webp','3.webp','4.webp','5.webp'
+  ];
+  const shuffled=files.sort(()=>Math.random()-.5);
+  let index=0;
+  function tryNext(){
+    if(index>=shuffled.length){done(null);return}
+    const url=folder+'/'+shuffled[index++];
+    const probe=new Image();
+    probe.onload=()=>done(url);
+    probe.onerror=tryNext;
+    probe.src=url;
+  }
+  tryNext();
+}
+function playAction(action){
+  clearTimeout(resetTimer);
+  photoArea.classList.remove('dragover');
+  hint.textContent='데이트 중...';
+  statusText.textContent=messages[action]+' · '+city;
+  randomFileFromFolder('images/one',url=>{
+    if(url){
+      photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 찾지 못했어요. images/one 파일명을 확인해 주세요.'};
+      photo.src=url;
+    }else{
+      // 파일명이 목록과 다르면 안내 후 기본 이미지로 돌아갑니다.
+      statusText.textContent='images/one에서 이미지를 찾지 못했어요. 파일명을 확인해 주세요.';
+    }
+    resetTimer=setTimeout(setDefault,3000);
+  });
+}
+document.querySelectorAll('.action').forEach(button=>{
+  button.addEventListener('dragstart',event=>{
+    event.dataTransfer.setData('text/plain',button.dataset.action);
+    event.dataTransfer.effectAllowed='copy';
+    button.classList.add('dragging');
+  });
+  button.addEventListener('dragend',()=>button.classList.remove('dragging'));
+  button.addEventListener('click',()=>playAction(button.dataset.action));
+});
+photoArea.addEventListener('dragover',event=>{
+  event.preventDefault();
+  event.dataTransfer.dropEffect='copy';
+  photoArea.classList.add('dragover');
+});
+photoArea.addEventListener('dragleave',event=>{
+  if(!photoArea.contains(event.relatedTarget))photoArea.classList.remove('dragover');
+});
+photoArea.addEventListener('drop',event=>{
+  event.preventDefault();
+  const action=event.dataTransfer.getData('text/plain');
+  if(action&&messages[action])playAction(action);
+});
+photo.addEventListener('error',()=>{
+  if(photo.getAttribute('src')===defaultImage){
+    statusText.textContent='기본 이미지 경로를 확인해 주세요: images/won/index.png';
+  }
+});
+</script>
+</body>
+</html>
