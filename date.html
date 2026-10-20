@@ -23,14 +23,14 @@ header{height:28px;flex:none;display:flex;align-items:center;justify-content:spa
 .photo-area.dragover{outline:2px dashed #888;outline-offset:4px;border-radius:12px}
 #personPhoto{display:block;width:100%;height:100%;object-fit:contain;user-select:none;-webkit-user-drag:none;transition:opacity .12s}
 .photo-hint{position:absolute;bottom:7px;left:50%;transform:translateX(-50%);white-space:nowrap;background:#111b;color:#ccc;padding:6px 9px;border-radius:7px;font-size:10px;pointer-events:none}
-.actions-wrap{width:min(100%,530px);flex:none}
+.actions-wrap{width:min(100%,650px);flex:none;background:transparent;border:0;border-radius:0;padding:0}
 .title{font-size:13px;font-weight:700;margin:0 0 9px;text-align:center}
-.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
-.action{border:1px solid #424242;background:#252525;color:#eee;border-radius:10px;min-height:76px;padding:9px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;transition:background .15s,border-color .15s,transform .15s;touch-action:manipulation}
+.actions{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:7px}
+.action{border:1px solid #424242;background:transparent;color:#eee;border-radius:9px;min-height:58px;padding:7px 3px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;transition:background .15s,border-color .15s,transform .15s;touch-action:manipulation}
 .action:hover,.action:focus-visible{background:#333;border-color:#777;outline:none}
 .action.dragging{opacity:.45;transform:scale(.96)}
-.action .emoji{font-size:22px;line-height:1}
-.action strong{font-size:11px;font-weight:700;white-space:nowrap}
+.action .emoji{font-size:19px;line-height:1}
+.action strong{font-size:10px;font-weight:700;white-space:nowrap}
 .status{min-height:18px;text-align:center;font-size:11px;color:#aaa}
 @media(max-width:430px){.app{padding:9px 10px;gap:7px}.place{gap:4px}.place button{padding:7px 8px;font-size:11px}.photo-area{height:min(56vh,440px);min-height:170px}.actions{gap:5px}.action{min-height:68px;border-radius:8px}.action .emoji{font-size:20px}.action strong{font-size:10px}.title{margin-bottom:7px}}
 @media(max-height:620px){.app{padding:6px 12px;gap:5px}.photo-area{height:calc(100dvh - 190px);min-height:145px;max-height:390px}.action{min-height:56px;padding:6px 2px;gap:5px}.action .emoji{font-size:18px}.title{margin-bottom:5px}.status{min-height:12px}}
@@ -49,13 +49,7 @@ header{height:28px;flex:none;display:flex;align-items:center;justify-content:spa
     </div>
     <section class="actions-wrap">
       <p class="title">무엇을 할까?</p>
-      <div class="actions" id="actions">
-        <button class="action" draggable="true" data-action="cafe"><span class="emoji">☕</span><strong>카페 가기</strong></button>
-        <button class="action" draggable="true" data-action="walk"><span class="emoji">🌆</span><strong>산책하기</strong></button>
-        <button class="action" draggable="true" data-action="food"><span class="emoji">🍜</span><strong>맛집 가기</strong></button>
-        <button class="action" draggable="true" data-action="photo"><span class="emoji">📸</span><strong>사진 찍기</strong></button>
-        <button class="action" draggable="true" data-action="gift"><span class="emoji">🎁</span><strong>선물 주기</strong></button>
-      </div>
+      <div class="actions" id="actions"></div>
     </section>
     <div class="status" id="status" aria-live="polite">선택지를 사진 위로 드래그하거나 눌러 봐.</div>
   </main>
@@ -66,22 +60,36 @@ const photo=document.getElementById('personPhoto');
 const statusText=document.getElementById('status');
 const hint=document.getElementById('photoHint');
 const defaultImage='images/won/index.png';
-const actionImages={
-  cafe:'cafe',
-  walk:'walk',
-  food:'food',
-  photo:'photo',
-  gift:'gift'
-};
-const messages={
-  cafe:'카페 데이트 중!',
-  walk:'함께 산책하는 중!',
-  food:'맛집 데이트 중!',
-  photo:'사진을 찍는 중!',
-  gift:'선물을 건넸어!'
-};
+const actions = [
+  ['cafe','☕','카페 가기','카페 데이트 중!'],
+  ['walk','🌆','산책하기','함께 산책하는 중!'],
+  ['food','🍜','맛집 가기','맛집 데이트 중!'],
+  ['photo','📸','사진 찍기','사진을 찍는 중!'],
+  ['gift','🎁','선물 주기','선물을 건넸어!'],
+  ['movie','🎬','영화 보기','같이 영화를 보는 중!'],
+  ['shopping','🛍️','쇼핑하기','함께 쇼핑하는 중!'],
+  ['arcade','🕹️','오락실 가기','오락실에서 노는 중!'],
+  ['karaoke','🎤','노래방 가기','노래방에서 신나게 노는 중!'],
+  ['dessert','🍰','디저트 먹기','달콤한 디저트를 먹는 중!'],
+  ['beach','🏖️','바다 보기','바다를 보며 쉬는 중!'],
+  ['selfie','🤳','셀카 찍기','셀카를 찍는 중!'],
+  ['flowers','💐','꽃 선물하기','꽃을 선물했어!'],
+  ['music','🎧','음악 듣기','함께 음악을 듣는 중!'],
+  ['drive','🚗','드라이브','드라이브를 즐기는 중!']
+];
+const messages = Object.fromEntries(actions.map(item => [item[0], item[3]]));
+
+const actionGrid = document.getElementById('actions');
+actions.forEach(([key, emoji, label]) => {
+  const button = document.createElement('button');
+  button.className = 'action';
+  button.draggable = true;
+  button.dataset.action = key;
+  button.innerHTML = `<span class="emoji">${emoji}</span><strong>${label}</strong>`;
+  actionGrid.appendChild(button);
+});
+
 let resetTimer=null;
-let currentObjectUrl=null;
 let city='서울';
 
 document.querySelectorAll('[data-city]').forEach(button=>{
@@ -100,51 +108,33 @@ function setDefault(){
   photoArea.classList.remove('dragover');
 }
 function randomFileFromFolder(folder,done){
-  // images/won 폴더에 실제로 있는 파일명 목록
   const files = [
-    'angry.jpeg',
-    'good.jpeg',
-    'good2.jpeg',
-    'good3.jpeg',
-    'haha.png',
-    'loveyou.jpeg',
-    'power.gif',
-    'power2.png',
-    'wtf.png'
+    'angry.jpeg','good.jpeg','good2.jpeg','good3.jpeg',
+    'haha.png','loveyou.jpeg','power.gif','power2.png','wtf.png'
   ];
-
-  // 매번 다른 이미지 하나를 무작위로 선택
   const shuffled = [...files].sort(() => Math.random() - 0.5);
   let index = 0;
-
   function tryNext(){
-    if(index >= shuffled.length){
-      done(null);
-      return;
-    }
-
+    if(index >= shuffled.length){done(null);return;}
     const url = `${folder}/${shuffled[index++]}`;
     const probe = new Image();
-
     probe.onload = () => done(url);
     probe.onerror = tryNext;
     probe.src = url;
   }
-
   tryNext();
 }
 function playAction(action){
   clearTimeout(resetTimer);
   photoArea.classList.remove('dragover');
   hint.textContent='데이트 중...';
-  statusText.textContent=messages[action]+' · '+city;
+  statusText.textContent=(messages[action] || '데이트 중!')+' · '+city;
   randomFileFromFolder('images/won',url=>{
     if(url){
-      photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 찾지 못했어요. images/won 파일명을 확인해 주세요.'};
+      photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 불러오지 못했어요.'};
       photo.src=url;
     }else{
-      // 파일명이 목록과 다르면 안내 후 기본 이미지로 돌아갑니다.
-      statusText.textContent='images/won에서 이미지를 찾지 못했어요. 파일명을 확인해 주세요.';
+      statusText.textContent='images/won 폴더의 이미지 파일명을 확인해 주세요.';
     }
     resetTimer=setTimeout(setDefault,3000);
   });
