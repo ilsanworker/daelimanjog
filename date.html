@@ -125,7 +125,7 @@ function playAction(action){
   photoArea.classList.remove('dragover');
   hint.textContent='데이트 중...';
   statusText.textContent=messages[action]+' · '+city;
-  randomFileFromFolder('images/one',url=>{
+  randomFileFromFolder('images/won',url=>{
     if(url){
       photo.onerror=()=>{photo.onerror=null;setDefault();statusText.textContent='이미지를 찾지 못했어요. images/one 파일명을 확인해 주세요.'};
       photo.src=url;
